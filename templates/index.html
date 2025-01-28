@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLP Text Tool</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styling */
+        body {
+            background-image: url('/static/bg1.jpg'); /* Reference the local background image */
+            background-size: cover; /* Ensure the image covers the entire screen */
+            background-repeat: no-repeat; /* Prevent tiling */
+            background-attachment: fixed; /* Fix the background to the viewport */
+            font-family: 'Roboto', sans-serif; /* Modern and clean font */
+            color: #000000; /* Black text for better readability */
+        }
+        h1 {
+            margin-top: 20px;
+            text-align: center;
+            color: #808080; /* Grey color */
+            font-size: 3em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* 3D shadow effect */
+            transition: transform 0.3s ease, color 0.3s ease; /* Smooth transition for hover */
+        }
+        h1:hover {
+            transform: scale(1.1) rotate(5deg); /* Scale and slight rotation on hover */
+            color: #ffffff; /* Change color to white on hover */
+        }
+        .container {
+            margin-top: 30px;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.9); /* More opaque white background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease-in-out; /* Add fade-in animation */
+        }
+        textarea {
+            resize: none;
+        }
+        .btn {
+            width: 100%;
+        }
+        .btn-secondary {
+            color: #ffffff; /* Keep Generate Word Cloud button text white */
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul li {
+            margin: 5px 0;
+            font-size: 1.2em; /* Slightly larger text for keywords */
+        }
+        .box {
+            border: 1px solid #e9ecef;
+            padding: 20px; /* Add more padding */
+            border-radius: 8px;
+            margin-bottom: 30px; /* Increase space between sections */
+            background-color: rgba(255, 255, 255, 1); /* Fully opaque white */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow */
+            animation: fadeInUp 0.8s ease-in-out; /* Add fade-in-up animation */
+        }
+        h4 {
+            font-size: 1.5em; /* Slightly larger heading size */
+            color: #000000; /* Black heading for better readability */
+        }
+        p {
+            font-size: 1.1em; /* Larger text for body content */
+            color: #000000; /* Black text for contrast with white boxes */
+        }
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        /* Fade-in-up animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar for user authentication -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">NLP Text Tool</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/dashboard">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/profile">Profile</a> <!-- Profile Link -->
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/register">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+
+    <!-- Main Container -->
+    <div class="container">
+        <h1>NLP Text Tool</h1>
+        <form method="POST" action="/" class="mb-4">
+            <!-- Input Text Area -->
+            <div class="box">
+                <label for="textInput" class="form-label">Enter your text:</label>
+                <textarea name="text_input" id="textInput" rows="6" class="form-control" placeholder="Enter your text here..."></textarea>
+            </div>
+            <!-- Analyze Button -->
+            <button type="submit" class="btn btn-primary">Analyze</button>
+        </form>
+
+        {% if text_input %}
+        <div class="results">
+            <!-- Input Text -->
+            <div class="box">
+                <h4>Input Text</h4>
+                <p>{{ text_input }}</p>
+            </div>
+
+            <!-- Sentiment Analysis -->
+            <div class="box">
+                <h4>Sentiment Analysis</h4>
+                <p><strong>Sentiment:</strong> {{ sentiment_label }}</p>
+                <p><strong>Confidence Score:</strong> {{ sentiment_score }}</p>
+            </div>
+
+            <!-- Top Keywords -->
+            <div class="box">
+                <h4>Top Keywords</h4>
+                <ul>
+                    {% for word, freq in keywords %}
+                        <li><strong>{{ word }}</strong>: {{ freq }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Text Summary -->
+            <div class="box">
+                <h4>Summary</h4>
+                <p>{{ summary_text }}</p>
+            </div>
+
+            <!-- Word Cloud -->
+            <div class="box">
+                <h4>Word Cloud</h4>
+                <form method="POST" action="/wordcloud">
+                    <input type="hidden" name="text_input" value="{{ text_input }}">
+                    <button type="submit" class="btn btn-secondary">Generate Word Cloud</button>
+                </form>
+            </div>
+
+            <!-- Download Results -->
+            <div class="box">
+                <h4>Download Results</h4>
+                <form method="POST" action="/download">
+                    <input type="hidden" name="text_input" value="{{ text_input }}">
+                    <input type="hidden" name="sentiment_label" value="{{ sentiment_label }}">
+                    <input type="hidden" name="sentiment_score" value="{{ sentiment_score }}">
+                    <input type="hidden" name="keywords" value="{{ keywords }}">
+                    <input type="hidden" name="summary_text" value="{{ summary_text }}">
+                    <button type="submit" class="btn btn-success">Download Results</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

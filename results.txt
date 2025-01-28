@@ -1,0 +1,16 @@
+Input Text:
+Using a few simple prompts, create professional, stylized, and structured documents with images, tables, and more. Get help refining your content, see the latest summary of your work, and ask questions to improve and finalize your document
+
+Sentiment Analysis:
+Sentiment: POSITIVE
+Confidence Score: 0.98
+
+Top Keywords:
+- using: 1
+- simple: 1
+- prompts: 1
+- create: 1
+- professional: 1
+
+Summary:
+ Using a few simple prompts, create professional, stylized, and structured documents . Get help refining your content, see the latest summary of your work, and ask questions to improve and finalize your document .
